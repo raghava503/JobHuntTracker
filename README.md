@@ -85,5 +85,5 @@ curl -X POST http://localhost:5000/api/jobapplications \
 
 ## 👤 Author
 
-**Rock**: aspiring full stack .NET developer
-[GitHub](https://github.com/raghava503) · [LinkedIn](https://www.linkedin.com/in/your-profile)
+**Raghava**: aspiring full stack .NET developer
+[GitHub](https://github.com/raghava503) · [LinkedIn](https://linkedin.com/in/raghava-gudiwada-0b2bb4317)
