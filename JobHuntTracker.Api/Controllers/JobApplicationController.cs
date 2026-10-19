@@ -9,31 +9,31 @@ namespace JobHuntTracker.Api.Controllers;
 public class JobApplicationsController(IJobApplicationService service) : ControllerBase
 {
     [HttpGet]
-    public ActionResult<IEnumerable<JobApplication>> GetAll([FromQuery] ApplicationStatus? status) =>
-        Ok(service.GetAll(status));
+    public async Task<ActionResult<IEnumerable<JobApplication>>> GetAll([FromQuery] ApplicationStatus? status) =>
+        Ok(await service.GetAllAsync(status));
 
     [HttpGet("{id:guid}")]
-    public ActionResult<JobApplication> GetById(Guid id)
+    public async Task<ActionResult<JobApplication>> GetById(Guid id)
     {
-        var app = service.GetById(id);
+        var app = await service.GetByIdAsync(id);
         return app is null ? NotFound() : Ok(app);
     }
 
     [HttpPost]
-    public ActionResult<JobApplication> Create(CreateJobApplicationDto dto)
+    public async Task<ActionResult<JobApplication>> Create(CreateJobApplicationDto dto)
     {
-        var created = service.Add(dto);
+        var created = await service.AddAsync(dto);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     [HttpPatch("{id:guid}/status")]
-    public ActionResult<JobApplication> UpdateStatus(Guid id, UpdateStatusDto dto)
+    public async Task<ActionResult<JobApplication>> UpdateStatus(Guid id, UpdateStatusDto dto)
     {
-        var updated = service.UpdateStatus(id, dto.Status);
+        var updated = await service.UpdateStatusAsync(id, dto.Status);
         return updated is null ? NotFound() : Ok(updated);
     }
 
     [HttpDelete("{id:guid}")]
-    public IActionResult Delete(Guid id) =>
-        service.Delete(id) ? NoContent() : NotFound();
+    public async Task<IActionResult> Delete(Guid id) =>
+        await service.DeleteAsync(id) ? NoContent() : NotFound();
 }

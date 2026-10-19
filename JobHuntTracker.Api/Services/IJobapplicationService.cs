@@ -4,9 +4,9 @@ namespace JobHuntTracker.Api.Services;
 
 public interface IJobApplicationService
 {
-    IEnumerable<JobApplication> GetAll(ApplicationStatus? status);
-    JobApplication? GetById(Guid id);
-    JobApplication Add(CreateJobApplicationDto dto);
-    JobApplication? UpdateStatus(Guid id, ApplicationStatus status);
-    bool Delete(Guid id);
+    Task<List<JobApplication>> GetAllAsync(ApplicationStatus? status);
+    Task<JobApplication?> GetByIdAsync(Guid id);
+    Task<JobApplication> AddAsync(CreateJobApplicationDto dto);
+    Task<JobApplication?> UpdateStatusAsync(Guid id, ApplicationStatus status);
+    Task<bool> DeleteAsync(Guid id);
 }
