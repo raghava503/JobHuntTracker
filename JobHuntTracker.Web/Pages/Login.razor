@@ -38,7 +38,7 @@
         try
         {
             var (ok, err) = await action();
-            if (ok) Nav.NavigateTo("/");
+            if (ok) Nav.NavigateTo("");
             else error = err;
         }
         catch (HttpRequestException)
