@@ -1,0 +1,53 @@
+@page "/login"
+@inject ApiClient Api
+@inject NavigationManager Nav
+
+<div class="login-card">
+    <h2>🎯 Job Hunt Tracker</h2>
+    <p class="muted">Log in or create an account to see your board.</p>
+
+    <form @onsubmit="LoginAsync" @onsubmit:preventDefault>
+        <input type="email" placeholder="Email" @bind="email" @bind:event="oninput" />
+        <input type="password" placeholder="Password (8+ characters)" @bind="password" @bind:event="oninput" />
+
+        @if (error is not null)
+        {
+            <p class="error">@error</p>
+        }
+
+        <div class="row">
+            <button type="submit" disabled="@busy">Log in</button>
+            <button type="button" class="secondary" disabled="@busy" @onclick="RegisterAsync">Register</button>
+        </div>
+    </form>
+</div>
+
+@code {
+    private string email = "";
+    private string password = "";
+    private string? error;
+    private bool busy;
+
+    private Task LoginAsync() => RunAsync(() => Api.LoginAsync(email, password));
+    private Task RegisterAsync() => RunAsync(() => Api.RegisterAsync(email, password));
+
+    private async Task RunAsync(Func<Task<(bool Ok, string? Error)>> action)
+    {
+        busy = true;
+        error = null;
+        try
+        {
+            var (ok, err) = await action();
+            if (ok) Nav.NavigateTo("/");
+            else error = err;
+        }
+        catch (HttpRequestException)
+        {
+            error = "Can't reach the server. Is the API running?";
+        }
+        finally
+        {
+            busy = false;
+        }
+    }
+}

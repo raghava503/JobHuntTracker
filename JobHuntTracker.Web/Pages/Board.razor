@@ -1,0 +1,123 @@
+@page "/"
+@using System.Net
+@inject ApiClient Api
+@inject AuthState Auth
+@inject NavigationManager Nav
+
+<header class="topbar">
+    <h2>🎯 My Job Hunt</h2>
+    <button class="secondary" @onclick="LogoutAsync">Log out</button>
+</header>
+
+<form class="add-form" @onsubmit="AddAsync" @onsubmit:preventDefault>
+    <input placeholder="Company" maxlength="100" @bind="company" @bind:event="oninput" />
+    <input placeholder="Role" maxlength="100" @bind="role" @bind:event="oninput" />
+    <button type="submit" disabled="@string.IsNullOrWhiteSpace(company + role)">+ Add</button>
+</form>
+
+@if (error is not null)
+{
+    <p class="error">@error</p>
+}
+
+@if (loading)
+{
+    <p class="muted">Loading your applications…</p>
+}
+else
+{
+    <div class="board">
+        @foreach (var status in Columns)
+        {
+            <section class="column">
+                <h3>@status <span class="count">@apps.Count(a => a.Status == status)</span></h3>
+
+                @foreach (var app in apps.Where(a => a.Status == status))
+                {
+                    <article class="card">
+                        <strong>@app.Company</strong>
+                        <span>@app.Role</span>
+                        <small>@app.AppliedOnUtc.ToLocalTime().ToString("dd MMM yyyy")</small>
+                        <div class="actions">
+                            @foreach (var target in Columns.Where(c => c != status))
+                            {
+                                <button @onclick="() => MoveAsync(app, target)">→ @target</button>
+                            }
+                            <button class="danger" title="Delete" @onclick="() => DeleteAsync(app)">🗑</button>
+                        </div>
+                    </article>
+                }
+            </section>
+        }
+    </div>
+}
+
+@code {
+    private static readonly ApplicationStatus[] Columns = Enum.GetValues<ApplicationStatus>();
+
+    private List<JobApplication> apps = [];
+    private string company = "";
+    private string role = "";
+    private string? error;
+    private bool loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Auth.InitAsync();
+        if (!Auth.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+        await GuardAsync(async () => apps = await Api.GetAllAsync());
+    }
+
+    private Task AddAsync() => GuardAsync(async () =>
+    {
+        await Api.AddAsync(new NewApplication(company.Trim(), role.Trim()));
+        company = role = "";
+        apps = await Api.GetAllAsync();
+    });
+
+    private Task MoveAsync(JobApplication app, ApplicationStatus target) => GuardAsync(async () =>
+    {
+        await Api.MoveAsync(app.Id, target);
+        apps = await Api.GetAllAsync();
+    });
+
+    private Task DeleteAsync(JobApplication app) => GuardAsync(async () =>
+    {
+        await Api.DeleteAsync(app.Id);
+        apps = await Api.GetAllAsync();
+    });
+
+    private async Task LogoutAsync()
+    {
+        await Auth.SignOutAsync();
+        Nav.NavigateTo("/login");
+    }
+
+    // One place for loading state and error handling
+    private async Task GuardAsync(Func<Task> action)
+    {
+        error = null;
+        try
+        {
+            await action();
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Nav.NavigateTo("/login");
+        }
+        catch (HttpRequestException ex)
+        {
+            error = ex.StatusCode == HttpStatusCode.BadRequest
+                ? "Please check your input."
+                : "Can't reach the API. Is it running?";
+        }
+        finally
+        {
+            loading = false;
+        }
+    }
+}

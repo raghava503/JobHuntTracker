@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="JobHuntTracker.Api/JobHuntTracker.Api.csproj" />
+  <Project Path="JobHuntTracker.Web/JobHuntTracker.Web.csproj" />
 </Solution>
