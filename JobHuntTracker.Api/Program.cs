@@ -56,8 +56,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
 
-    using var scope = app.Services.CreateScope();
+// Fine for a demo. In a bigger system, run migrations as a pipeline step instead.
+using (var scope = app.Services.CreateScope())
+{
     scope.ServiceProvider.GetRequiredService<AppDbContext>().Database.Migrate();
 }
 
