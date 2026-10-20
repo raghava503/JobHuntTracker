@@ -79,7 +79,7 @@ curl -X POST http://localhost:5000/api/jobapplications \
 - [x] CI pipeline
 - [ ] Unit tests for the service layer
 - [x] SQLite + Entity Framework Core
-- [ ] JWT authentication
+- [x] JWT authentication
 - [ ] Blazor front end
 - [ ] Deploy to Azure App Service
 
