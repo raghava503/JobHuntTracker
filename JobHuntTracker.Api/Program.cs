@@ -18,7 +18,7 @@ if (string.IsNullOrWhiteSpace(jwt.Key))
 
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-builder.Services.AddOpenApi();
+
 
 builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlite(builder.Configuration.GetConnectionString("Default")));
@@ -53,10 +53,6 @@ builder.Services.AddCors(o => o.AddPolicy("web", p => p
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
 
 // Fine for a demo. In a bigger system, run migrations as a pipeline step instead.
 using (var scope = app.Services.CreateScope())
