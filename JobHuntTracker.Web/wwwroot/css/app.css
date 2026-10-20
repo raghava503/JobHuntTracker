@@ -17,6 +17,7 @@ button.danger { background:transparent; color:var(--danger); padding:.3rem .5rem
 .column { background:var(--panel); border-radius:12px; padding:.9rem; min-height:140px; }
 .column h3 { display:flex; justify-content:space-between; margin-bottom:.7rem; font-size:1rem; }
 .count { background:var(--card); border-radius:999px; padding:0 .6rem; font-size:.85rem; }
+.card { color: var(--text); background: var(--card); border: 0; border-radius:10px; padding:.7rem .8rem; margin-bottom:.6rem; display:flex; flex-direction:column; gap:.15rem; }
 .card { background:var(--card); border-radius:10px; padding:.7rem .8rem; margin-bottom:.6rem; display:flex; flex-direction:column; gap:.15rem; }
 .card small { color:var(--muted); }
 .actions { display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.5rem; }
